@@ -29,6 +29,9 @@ func (s *InventoryGRPCServer) CreateProduct(ctx context.Context, req *proto.Crea
 
 	createdProduct, err := s.productUsecase.Create(ctx, domainProduct)
 	if err != nil {
+		if errors.Is(err, domain.ErrInvalidProduct) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -58,6 +61,9 @@ func (s *InventoryGRPCServer) UpdateProduct(ctx context.Context, req *proto.Upda
 
 	err := s.productUsecase.Update(ctx, filter, update)
 	if err != nil {
+		if errors.Is(err, domain.ErrInvalidProduct) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

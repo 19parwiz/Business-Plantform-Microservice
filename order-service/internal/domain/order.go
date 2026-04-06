@@ -24,6 +24,34 @@ const (
 	StatusCancelled OrderStatus = "cancelled"
 )
 
+var allowedOrderTransitions = map[OrderStatus]map[OrderStatus]bool{
+	StatusPending: {
+		StatusPaid:      true,
+		StatusCancelled: true,
+	},
+	StatusPaid: {
+		StatusShipped: true,
+	},
+	StatusShipped: {
+		StatusDelivered: true,
+	},
+	StatusDelivered: {},
+	StatusCancelled: {},
+}
+
+func IsValidOrderStatus(status OrderStatus) bool {
+	_, ok := allowedOrderTransitions[status]
+	return ok
+}
+
+func CanTransitionOrderStatus(from, to OrderStatus) bool {
+	next, ok := allowedOrderTransitions[from]
+	if !ok {
+		return false
+	}
+	return next[to]
+}
+
 // OrderItem represents a product in an order with its quantity
 type OrderItem struct {
 	ProductID  uint64

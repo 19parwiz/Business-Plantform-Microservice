@@ -5,4 +5,5 @@ import "errors"
 var (
 	ErrProductNotFound   = errors.New("product not found")
 	ErrInsufficientStock = errors.New("insufficient stock")
+	ErrInvalidProduct    = errors.New("invalid product payload")
 )

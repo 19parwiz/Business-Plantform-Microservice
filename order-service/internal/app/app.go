@@ -55,7 +55,9 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	app := &App{
 		//httpServer: httpServer,
-		grpcServer: grpcServer,
+		grpcServer:  grpcServer,
+		grpcClients: grpcClients,
+		kafkaProd:   producer,
 	}
 
 	return app, nil
@@ -89,8 +91,14 @@ func (app *App) Stop() {
 	if err != nil {
 		log.Println("failed to shutdown http service:", err)
 	}
-	app.grpcClients.Close()
-	if err := app.kafkaProd.Close(); err != nil {
-		log.Println("failed to close Kafka producer:", err)
+
+	// Guard clauses keep shutdown safe even if initialization failed halfway.
+	if app.grpcClients != nil {
+		app.grpcClients.Close()
+	}
+	if app.kafkaProd != nil {
+		if err := app.kafkaProd.Close(); err != nil {
+			log.Println("failed to close Kafka producer:", err)
+		}
 	}
 }

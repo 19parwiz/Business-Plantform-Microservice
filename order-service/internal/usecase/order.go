@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/19parwiz/order-service/internal/adapter/mongo"
 	"github.com/19parwiz/order-service/internal/domain"
 	"time"
@@ -25,8 +26,17 @@ func NewOrder(aiRepo AutoIncRepo, repo OrderRepository, client InventoryClient, 
 }
 
 func (o *Order) Create(ctx context.Context, order domain.Order) (domain.Order, error) {
+	// Fast-fail validation keeps bad payloads out of persistence and events.
+	if order.UserID == 0 || len(order.Items) == 0 {
+		return domain.Order{}, fmt.Errorf("%w: user_id and items are required", domain.ErrInvalidOrder)
+	}
+
 	totalAmount := 0.0
 	for i, item := range order.Items {
+		if item.ProductID == 0 {
+			return domain.Order{}, fmt.Errorf("%w: product_id is required", domain.ErrInvalidOrder)
+		}
+
 		product, err := o.inventoryClient.GetProduct(ctx, item.ProductID)
 		if err != nil {
 			return domain.Order{}, err
@@ -128,10 +138,27 @@ func (o *Order) GetAll(ctx context.Context, filter domain.OrderFilter, page, lim
 }
 
 func (o *Order) Update(ctx context.Context, filter domain.OrderFilter, updated domain.OrderUpdateData) error {
+	if updated.Status == nil {
+		return fmt.Errorf("%w: status is required", domain.ErrInvalidOrderStatus)
+	}
+	if !domain.IsValidOrderStatus(*updated.Status) {
+		return fmt.Errorf("%w: %s", domain.ErrInvalidOrderStatus, *updated.Status)
+	}
+
+	currentOrder, err := o.repo.GetWithFilter(ctx, filter)
+	if err != nil {
+		return err
+	}
+
+	// Enforce a clear state machine so API consumers cannot skip steps accidentally.
+	if !domain.CanTransitionOrderStatus(currentOrder.Status, *updated.Status) {
+		return fmt.Errorf("%w: cannot change from %s to %s", domain.ErrInvalidOrderStatusTransition, currentOrder.Status, *updated.Status)
+	}
+
 	curTime := time.Now()
 	updated.UpdatedAt = &curTime
 
-	err := o.repo.Update(ctx, filter, updated)
+	err = o.repo.Update(ctx, filter, updated)
 	if err != nil {
 		return err
 	}
