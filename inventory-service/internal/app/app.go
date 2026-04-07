@@ -9,9 +9,9 @@ import (
 	"github.com/IBM/sarama"
 
 	//httpRepo "github.com/19parwiz/inventory-service/internal/adapter/http"
-	mongoRepo "github.com/19parwiz/inventory-service/internal/adapter/mongo"
+	postgresRepo "github.com/19parwiz/inventory-service/internal/adapter/postgres"
 	"github.com/19parwiz/inventory-service/internal/usecase"
-	mongoConn "github.com/19parwiz/inventory-service/pkg/mongo"
+	postgresConn "github.com/19parwiz/inventory-service/pkg/postgres"
 	"log"
 	"os"
 	"os/signal"
@@ -26,19 +26,20 @@ type App struct {
 	grpcServer    *grpcAPI.ServerAPI
 	consumerGroup sarama.ConsumerGroup
 	kafkaHandler  *kafka.Consumer
+	pgDB          *postgresConn.DB
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	log.Printf(fmt.Sprintf("Initializing %s service!", serviceName))
 
-	log.Println("Connecting to DB:", cfg.Mongo.Database)
-	mongoDB, err := mongoConn.NewDB(ctx, cfg.Mongo)
+	log.Println("Connecting to DB:", cfg.Postgres.Database)
+	pgDB, err := postgresConn.NewDB(ctx, cfg.Postgres)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to DB: %v", err)
 	}
 
-	aiRepo := mongoRepo.NewAutoInc(mongoDB.Conn)
-	pRepo := mongoRepo.NewProductRepo(mongoDB.Conn)
+	aiRepo := postgresRepo.NewAutoInc(pgDB.Pool)
+	pRepo := postgresRepo.NewProductRepo(pgDB.Pool)
 
 	pUsecase := usecase.NewProduct(aiRepo, pRepo)
 
@@ -58,6 +59,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		grpcServer:    grpcServer,
 		consumerGroup: consumerGroup,
 		kafkaHandler:  kafkaHandler,
+		pgDB:          pgDB,
 	}
 
 	return app, nil
@@ -104,5 +106,8 @@ func (app *App) Stop() {
 
 	if err := app.consumerGroup.Close(); err != nil {
 		log.Println("failed to close consumer group:", err)
+	}
+	if app.pgDB != nil {
+		app.pgDB.Close()
 	}
 }

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/19parwiz/user-service/pkg/mongo"
+	"github.com/19parwiz/user-service/pkg/postgres"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
@@ -11,9 +11,9 @@ import (
 )
 
 type (
-	Config struct {
-		Mongo   mongo.Config
-		Server  Server
+		Config struct {
+		Postgres postgres.Config
+		Server   Server
 		SMTP    SMTPConfig //  Added smptconfig here
 		Version string     `env:"VERSION"`
 	}

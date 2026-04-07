@@ -6,10 +6,10 @@ import (
 	"github.com/19parwiz/user-service/config"
 	"github.com/19parwiz/user-service/internal/adapter/grpc"
 	"github.com/19parwiz/user-service/internal/adapter/mail"
-	"github.com/19parwiz/user-service/internal/adapter/mongo"
+	postgresRepo "github.com/19parwiz/user-service/internal/adapter/postgres"
 	"github.com/19parwiz/user-service/internal/usecase"
 	"github.com/19parwiz/user-service/pkg/hashing"
-	mongoConn "github.com/19parwiz/user-service/pkg/mongo"
+	postgresConn "github.com/19parwiz/user-service/pkg/postgres"
 	"log"
 	"os"
 	"os/signal"
@@ -20,19 +20,20 @@ const serviceName = "user-service"
 
 type App struct {
 	grpcServer *grpc.ServerAPI
+	pgDB       *postgresConn.DB
 }
 
 func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	log.Printf(fmt.Sprintf("Initializing %s service...", serviceName))
 
-	log.Println("Connecting to DB:", cfg.Mongo.Database)
-	mongoDB, err := mongoConn.NewDB(ctx, cfg.Mongo)
+	log.Println("Connecting to DB:", cfg.Postgres.Database)
+	pgDB, err := postgresConn.NewDB(ctx, cfg.Postgres)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to DB: %v", err)
 	}
 
-	aiRepo := mongo.NewAutoInc(mongoDB.Conn)
-	userRepo := mongo.NewUserRepo(mongoDB.Conn)
+	aiRepo := postgresRepo.NewAutoInc(pgDB.Pool)
+	userRepo := postgresRepo.NewUserRepo(pgDB.Pool)
 
 	hasher := hashing.NewBcryptHasher()
 
@@ -50,6 +51,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	app := &App{
 		grpcServer: grpcServer,
+		pgDB:       pgDB,
 	}
 
 	return app, nil
@@ -80,5 +82,8 @@ func (app *App) Stop() {
 	err := app.grpcServer.Stop()
 	if err != nil {
 		log.Printf(fmt.Sprintf("Error stopping %s service: %v", serviceName, err))
+	}
+	if app.pgDB != nil {
+		app.pgDB.Close()
 	}
 }

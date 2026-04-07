@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"github.com/19parwiz/inventory-service/internal/adapter/mongo"
+	"github.com/19parwiz/inventory-service/internal/adapter/postgres"
 	"github.com/19parwiz/inventory-service/internal/domain"
 	"strings"
 	"time"
@@ -29,7 +29,7 @@ func (p *Product) Create(ctx context.Context, product domain.Product) (domain.Pr
 		return domain.Product{}, fmt.Errorf("%w: price cannot be negative", domain.ErrInvalidProduct)
 	}
 
-	id, err := p.aiRepo.Next(ctx, mongo.CollectionProducts)
+	id, err := p.aiRepo.Next(ctx, postgres.CollectionProducts)
 	if err != nil {
 		return domain.Product{}, err
 	}

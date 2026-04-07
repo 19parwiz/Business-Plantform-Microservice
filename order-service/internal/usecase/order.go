@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/19parwiz/order-service/internal/adapter/mongo"
+	"github.com/19parwiz/order-service/internal/adapter/postgres"
 	"github.com/19parwiz/order-service/internal/domain"
 	"time"
 )
@@ -62,7 +62,7 @@ func (o *Order) Create(ctx context.Context, order domain.Order) (domain.Order, e
 	order.UpdatedAt = time.Now()
 	order.Status = domain.StatusPending
 
-	id, err := o.aiRepo.Next(ctx, mongo.CollectionOrders)
+	id, err := o.aiRepo.Next(ctx, postgres.CollectionOrders)
 	if err != nil {
 		return domain.Order{}, err
 	}
