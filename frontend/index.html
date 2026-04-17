@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Bloom & Stem — fresh flowers and simple business tools." />
+    <!-- Go api-gateway base URL (HTTP). Change port to match api-gateway local.env HTTP_PORT. -->
+    <meta name="api-base" content="http://localhost:8080" />
     <title>Bloom & Stem</title>
     <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -78,6 +80,66 @@
             </div>
         </section>
     </div>
+
+    <section class="console" aria-label="Live API demo">
+        <h2 class="console-title">Connect to your Go stack</h2>
+        <p class="console-intro">
+            This UI calls the <strong>api-gateway</strong> over HTTP (<code class="inline-code">fetch</code>).
+            Gateway URL: <span id="api-base-hint" class="inline-code"></span>
+        </p>
+
+        <div class="console-grid">
+            <div class="console-card">
+                <h3>Register (user-service)</h3>
+                <form id="form-register" class="stack">
+                    <label class="field"><span>Email</span><input id="reg-email" type="email" autocomplete="email" required /></label>
+                    <label class="field"><span>Password</span><input id="reg-password" type="password" autocomplete="new-password" required /></label>
+                    <label class="field"><span>Name</span><input id="reg-name" type="text" autocomplete="name" required /></label>
+                    <button type="submit" class="btn primary">Create account</button>
+                </form>
+                <p id="status-register" class="status" role="status"></p>
+            </div>
+
+            <div class="console-card">
+                <h3>Session (gateway auth)</h3>
+                <p class="muted small">Protected routes send <code class="inline-code">X-Email</code> and <code class="inline-code">X-Password</code> — same as your Gin middleware.</p>
+                <form id="form-session" class="stack">
+                    <label class="field"><span>Email</span><input id="sess-email" type="email" autocomplete="username" /></label>
+                    <label class="field"><span>Password</span><input id="sess-password" type="password" autocomplete="current-password" /></label>
+                    <div class="btn-row">
+                        <button type="submit" class="btn primary">Save session</button>
+                        <button type="button" class="btn ghost" id="btn-session-clear">Clear</button>
+                    </div>
+                </form>
+                <button type="button" class="btn secondary" id="btn-profile">Load profile</button>
+                <pre id="profile-out" class="code-out" aria-live="polite"></pre>
+                <p id="status-session" class="status" role="status"></p>
+            </div>
+
+            <div class="console-card">
+                <h3>Catalog (inventory-service)</h3>
+                <p class="muted small">Public: <code class="inline-code">GET /api/v1/products</code></p>
+                <button type="button" class="btn primary" id="btn-products">Refresh products</button>
+                <div id="products-out" class="products-out"></div>
+                <p id="status-catalog" class="status" role="status"></p>
+            </div>
+
+            <div class="console-card wide">
+                <h3>Orders (order-service)</h3>
+                <p class="muted small">Requires session. Body is a JSON array of <code class="inline-code">{ "productId", "quantity" }</code> per gateway handler.</p>
+                <form id="form-order" class="stack horizontal">
+                    <label class="field"><span>Product id</span><input id="order-product-id" type="number" min="1" step="1" required /></label>
+                    <label class="field"><span>Qty</span><input id="order-qty" type="number" min="1" step="1" required /></label>
+                    <button type="submit" class="btn primary">Place order</button>
+                </form>
+                <div class="btn-row">
+                    <button type="button" class="btn secondary" id="btn-orders">List my orders</button>
+                </div>
+                <div id="orders-out" class="products-out"></div>
+                <p id="status-orders" class="status" role="status"></p>
+            </div>
+        </div>
+    </section>
 </main>
 <footer class="photo-credit">
     <p>
@@ -89,6 +151,6 @@
         <a href="https://unsplash.com/photos/pink-rose-in-bloom-close-up-photo-5fNcr2tJ-aI" target="_blank" rel="noopener noreferrer">Liliya Kontanistova</a>.
     </p>
 </footer>
-<script src="js/script.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
