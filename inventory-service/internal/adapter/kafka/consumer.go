@@ -1,12 +1,14 @@
 package kafka
 
 import (
+	"log"
+
+	"github.com/IBM/sarama"
+	"google.golang.org/protobuf/proto"
+
 	"github.com/19parwiz/inventory-service/internal/domain"
 	"github.com/19parwiz/inventory-service/internal/usecase"
 	events "github.com/19parwiz/inventory-service/protos/gen/golang"
-	"github.com/IBM/sarama"
-	"google.golang.org/protobuf/proto"
-	"log"
 )
 
 type Consumer struct {
@@ -30,27 +32,40 @@ func (h *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim saram
 	for message := range claim.Messages() {
 		var event events.OrderCreatedEvent
 		if err := proto.Unmarshal(message.Value, &event); err != nil {
-			log.Printf("Failed to unmarshal OrderCreatedEvent: %v", err)
+			log.Printf("kafka consumer: unmarshal OrderCreatedEvent: %v", err)
 			continue
 		}
 
-		for _, item := range event.Items {
-			filter := domain.ProductFilter{ID: &item.ProductId}
-			//updating the stock
-			currentProduct, err := h.usecase.Get(session.Context(), filter)
-			if err != nil {
-				log.Printf("Failed to get product from consumer: %v", err)
+		for _, item := range event.GetItems() {
+			if item == nil {
+				continue
 			}
-			newStock := currentProduct.Stock - item.Quantity
+			productID := item.GetProductId()
+			qty := item.GetQuantity()
+			if productID == 0 || qty == 0 {
+				log.Printf("kafka consumer: skip line item (product_id=%d quantity=%d)", productID, qty)
+				continue
+			}
 
-			update := domain.ProductUpdateData{
-				Stock: &newStock,
+			filter := domain.ProductFilter{ID: &productID}
+			current, err := h.usecase.Get(session.Context(), filter)
+			if err != nil {
+				log.Printf("kafka consumer: get product_id=%d: %v", productID, err)
+				continue
 			}
-			log.Printf("ProductUpdateData: %v", newStock)
+			if current.Stock < qty {
+				log.Printf("kafka consumer: insufficient stock product_id=%d have=%d need=%d", productID, current.Stock, qty)
+				continue
+			}
+
+			newStock := current.Stock - qty
+			update := domain.ProductUpdateData{Stock: &newStock}
 			if err := h.usecase.Update(session.Context(), filter, update); err != nil {
-				log.Printf("Failed to update stock for product %d: %v", item.ProductId, err)
+				log.Printf("kafka consumer: update stock product_id=%d: %v", productID, err)
+				continue
 			}
 		}
+
 		session.MarkMessage(message, "")
 	}
 	return nil
