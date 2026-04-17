@@ -1,75 +1,161 @@
-/* frontend/css/style.css */
+/* Bloom & Stem — floral storefront (Unsplash rose imagery) */
 
-/* Background & page styles */
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #2f3e4d, #4a5a70);
-    color: #d1d9e6;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #14221c;
+    color: #f3f7f4;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Center header */
-header {
+/* Hero: garden rose from Unsplash as full-bleed background */
+.site-hero {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.site-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://images.unsplash.com/photo-1710344061835-44af86e13d5a?auto=format&fit=crop&w=1920&h=900&q=85");
+    background-size: cover;
+    background-position: center 35%;
+}
+
+.site-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(10, 22, 18, 0.45) 0%,
+        rgba(10, 22, 18, 0.72) 55%,
+        rgba(10, 22, 18, 0.88) 100%
+    );
+}
+
+.site-hero__content {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-    background-color: rgba(41, 56, 71, 0.8); /* semi-transparent dark overlay */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    padding: 2.5rem 1.25rem 2.25rem;
+    max-width: 40rem;
+    margin: 0 auto;
 }
 
-header img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 20px;
+.brand-logo {
+    display: block;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+    object-fit: cover;
 }
 
-header h1 {
-    font-size: 2.5rem;
+.brand-name {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #c8e6c9;
+    font-weight: 600;
+}
+
+.site-hero h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.65rem, 4vw, 2.35rem);
     font-weight: 700;
-    color: #cfd8f7; /* soft blue-gray */
-    margin: 0;
+    color: #fff;
+    max-width: 22ch;
+    line-height: 1.2;
 }
 
-/* Panels container */
+.tagline {
+    margin: 0;
+    max-width: 36ch;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.5;
+}
+
 .panels {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    max-width: 900px;
-    margin: 40px auto;
-    flex-grow: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+    max-width: 960px;
+    margin: 2.5rem auto 2rem;
+    padding: 0 1rem;
+    flex: 1;
 }
 
-/* Panel styles */
 .panel {
-    background-color: #f8f9fb;
-    color: #34495e;
-    flex: 1;
-    padding: 25px 20px;
-    border-radius: 8px;
-    box-shadow: 0 3px 8px rgba(52, 73, 94, 0.12);
-    text-align: center;
-    transition: box-shadow 0.3s ease;
+    flex: 1 1 260px;
+    max-width: 320px;
+    background: #fffef9;
+    color: #2c3e35;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    border: 1px solid rgba(76, 175, 80, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .panel:hover {
-    box-shadow: 0 6px 15px rgba(52, 73, 94, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
 }
 
-.panel h2 {
-    margin-bottom: 12px;
-    font-weight: 600;
-    font-size: 1.5rem;
+.panel-photo {
+    display: block;
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    object-position: center;
 }
 
-.panel p {
-    font-size: 1rem;
-    line-height: 1.4;
-    color: #556b7a;
+.panel-body {
+    padding: 1.1rem 1.25rem 1.35rem;
+    text-align: center;
+}
+
+.panel-body h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 650;
+    color: #1b5e20;
+}
+
+.panel-body p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #4a6350;
+}
+
+.photo-credit {
+    margin-top: auto;
+    padding: 1rem 1.25rem 1.5rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
+    max-width: 52rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.photo-credit a {
+    color: #a5d6a7;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.photo-credit a:hover {
+    color: #c8e6c9;
 }

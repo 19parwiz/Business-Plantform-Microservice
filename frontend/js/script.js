@@ -1,2 +1,2 @@
-// Placeholder JS file
-console.log('Frontend script loaded');
+// Bloom & Stem — placeholder until API wiring (startup phase).
+console.log("Bloom & Stem — frontend shell ready");
