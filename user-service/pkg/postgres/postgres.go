@@ -37,6 +37,14 @@ func (db *DB) Close() {
 	}
 }
 
+// Ping checks connectivity to PostgreSQL (for HTTP readiness probes).
+func (db *DB) Ping(ctx context.Context) error {
+	if db == nil || db.Pool == nil {
+		return fmt.Errorf("postgres: pool is nil")
+	}
+	return db.Pool.Ping(ctx)
+}
+
 func (db *DB) ensureSchema(ctx context.Context) error {
 	schema := `
 CREATE TABLE IF NOT EXISTS user_auto_inc_ids (

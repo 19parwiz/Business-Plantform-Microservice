@@ -3,22 +3,26 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/19parwiz/user-service/config"
 	"github.com/19parwiz/user-service/internal/adapter/grpc"
+	"github.com/19parwiz/user-service/internal/adapter/httpserver"
 	"github.com/19parwiz/user-service/internal/adapter/mail"
 	postgresRepo "github.com/19parwiz/user-service/internal/adapter/postgres"
 	"github.com/19parwiz/user-service/internal/usecase"
 	"github.com/19parwiz/user-service/pkg/hashing"
 	postgresConn "github.com/19parwiz/user-service/pkg/postgres"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 const serviceName = "user-service"
 
 type App struct {
+	httpHealth *httpserver.Server
 	grpcServer *grpc.ServerAPI
 	pgDB       *postgresConn.DB
 }
@@ -48,8 +52,10 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	userUsecase := usecase.NewUserUsecase(aiRepo, userRepo, hasher, mailer, cfg.App.PublicBaseURL)
 
 	grpcServer := grpc.New(cfg.Server, userUsecase)
+	httpHealth := httpserver.New(cfg.Server.HTTPServer, pgDB)
 
 	app := &App{
+		httpHealth: httpHealth,
 		grpcServer: grpcServer,
 		pgDB:       pgDB,
 	}
@@ -60,6 +66,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 func (app *App) Start() error {
 	errCh := make(chan error)
 
+	app.httpHealth.Run(errCh)
 	app.grpcServer.Run(errCh)
 
 	log.Printf(fmt.Sprintf("Starting %s service!", serviceName))
@@ -79,6 +86,13 @@ func (app *App) Start() error {
 }
 
 func (app *App) Stop() {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if app.httpHealth != nil {
+		if err := app.httpHealth.Stop(ctx); err != nil {
+			log.Printf("Error stopping %s HTTP health: %v", serviceName, err)
+		}
+	}
 	err := app.grpcServer.Stop()
 	if err != nil {
 		log.Printf(fmt.Sprintf("Error stopping %s service: %v", serviceName, err))
