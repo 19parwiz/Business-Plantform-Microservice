@@ -54,7 +54,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	orderUsecase := usecase.NewOrder(aiRepo, orderRepo, inventoryClient, producer)
 
-	httpServer := httpRepo.New(cfg.Server, orderUsecase)
+	httpServer := httpRepo.New(cfg.Server, orderUsecase, pgDB)
 	grpcServer := grpcAPI.New(cfg.Server, orderUsecase)
 
 	app := &App{
