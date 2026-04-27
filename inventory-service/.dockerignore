@@ -1,0 +1,5 @@
+.git
+.env
+local.env
+*.md
+Taskfile.yaml

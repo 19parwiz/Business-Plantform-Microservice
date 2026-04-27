@@ -56,7 +56,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	pUsecase := usecase.NewProduct(aiRepo, pRepo)
 
-	httpServer := httpRepo.New(cfg.Server, pUsecase)
+	httpServer := httpRepo.New(cfg.Server, pUsecase, pgDB)
 	grpcServer := grpcAPI.New(cfg.Server, pUsecase)
 
 	brokers := nonEmptyBrokers(cfg.Brokers)
@@ -72,7 +72,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		}
 		kafkaHandler = kafka.NewConsumer(pUsecase, "order.created")
 	} else {
-		log.Println("Kafka consumer disabled (BROKERS unset or empty); HTTP/gRPC still run. Set BROKERS=127.0.0.1:9092 when Docker Kafka is up.")
+		log.Println("Kafka consumer disabled: BROKERS empty or unset (HTTP and gRPC still run).")
 	}
 
 	app := &App{
@@ -112,9 +112,9 @@ func (app *App) Start() error {
 		return errRun
 	case sig := <-shutdownCh:
 
-		log.Printf(fmt.Sprintf("Received %v signal, shutting down! Thank you Parwiz ", sig))
+		log.Printf("shutting down on signal: %v", sig)
 		app.Stop()
-		log.Println("graceful shutdown completed!")
+		log.Println("shutdown complete")
 	}
 	return nil
 }
