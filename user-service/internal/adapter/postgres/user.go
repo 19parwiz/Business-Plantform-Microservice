@@ -89,6 +89,57 @@ LIMIT 1`, where)
 	return user, nil
 }
 
+func (u *UserRepo) List(ctx context.Context, page, limit int64) ([]domain.User, int64, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 20
+	}
+	offset := (page - 1) * limit
+
+	var total int64
+	if err := u.pool.QueryRow(ctx, `SELECT COUNT(*) FROM users`).Scan(&total); err != nil {
+		return nil, 0, fmt.Errorf("failed to count users: %w", err)
+	}
+
+	rows, err := u.pool.Query(ctx, `
+SELECT id, name, email, email_confirm_token, hashed_password, created_at, updated_at
+FROM users
+ORDER BY id DESC
+LIMIT $1 OFFSET $2`, limit, offset)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list users: %w", err)
+	}
+	defer rows.Close()
+
+	users := make([]domain.User, 0, limit)
+	for rows.Next() {
+		var (
+			user domain.User
+			id   int64
+		)
+		if err := rows.Scan(
+			&id,
+			&user.Name,
+			&user.Email,
+			&user.EmailConfirmToken,
+			&user.HashedPassword,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		); err != nil {
+			return nil, 0, fmt.Errorf("failed to scan user row: %w", err)
+		}
+		user.ID = uint64(id)
+		users = append(users, user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, 0, fmt.Errorf("failed reading users rows: %w", err)
+	}
+
+	return users, total, nil
+}
+
 func (u *UserRepo) Update(ctx context.Context, filter domain.UserFilter, update domain.UserUpdate) error {
 	setClauses := make([]string, 0, 4)
 	args := make([]any, 0, 6)

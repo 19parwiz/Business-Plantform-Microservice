@@ -35,6 +35,14 @@ func (m *mockUserRepo) GetWithFilter(ctx context.Context, filter domain.UserFilt
 	return domain.User{}, errors.New("user not found")
 }
 
+func (m *mockUserRepo) List(ctx context.Context, page, limit int64) ([]domain.User, int64, error) {
+	out := make([]domain.User, 0, len(m.users))
+	for _, u := range m.users {
+		out = append(out, u)
+	}
+	return out, int64(len(out)), nil
+}
+
 func (m *mockUserRepo) Delete(ctx context.Context, filter domain.UserFilter) error {
 	if filter.Email != nil {
 		delete(m.users, *filter.Email)

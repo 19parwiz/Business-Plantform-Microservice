@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/19parwiz/user-service/internal/domain"
 )
@@ -61,8 +62,8 @@ func (uc UserUsecase) Register(ctx context.Context, req domain.User) (domain.Use
 		return domain.User{}, err
 	}
 
-	// === ADD THIS: generate and set email confirmation token here ===
-	req.EmailConfirmToken = generateToken() // Implement generateToken to create a random token string
+	// Token is persisted and embedded in the confirmation link email.
+	req.EmailConfirmToken = generateToken()
 
 	err = uc.userRepo.Create(ctx, req)
 	if err != nil {
@@ -89,7 +90,7 @@ func (uc UserUsecase) Register(ctx context.Context, req domain.User) (domain.Use
 	return domain.User{
 		ID:    id,
 		Name:  req.Name,
-		Email: req.Email, //  Added this line for testing
+		Email: req.Email,
 	}, nil
 }
 
@@ -123,4 +124,54 @@ func (uc UserUsecase) Get(ctx context.Context, filter domain.UserFilter) (domain
 		return domain.User{}, err
 	}
 	return user, nil
+}
+
+func (uc UserUsecase) List(ctx context.Context, page, limit int64) ([]domain.User, int64, error) {
+	// Admin listing is paginated to keep payload stable as data grows.
+	return uc.userRepo.List(ctx, page, limit)
+}
+
+func (uc UserUsecase) Delete(ctx context.Context, filter domain.UserFilter) error {
+	return uc.userRepo.Delete(ctx, filter)
+}
+
+func (uc UserUsecase) Update(ctx context.Context, filter domain.UserFilter, name, email, password *string) (domain.User, error) {
+	update := domain.UserUpdate{}
+	hasChanges := false
+
+	if name != nil {
+		n := strings.TrimSpace(*name)
+		if n != "" {
+			update.Name = &n
+			hasChanges = true
+		}
+	}
+	if email != nil {
+		e := strings.TrimSpace(*email)
+		if e != "" {
+			update.Email = &e
+			hasChanges = true
+		}
+	}
+	if password != nil {
+		p := strings.TrimSpace(*password)
+		if p != "" {
+			hashed, err := uc.pHasher.Hash(p)
+			if err != nil {
+				return domain.User{}, err
+			}
+			update.HashedPassword = &hashed
+			hasChanges = true
+		}
+	}
+	if !hasChanges {
+		return domain.User{}, domain.ErrInvalidUserUpdate
+	}
+	now := time.Now()
+	update.UpdatedAt = &now
+
+	if err := uc.userRepo.Update(ctx, filter, update); err != nil {
+		return domain.User{}, err
+	}
+	return uc.userRepo.GetWithFilter(ctx, filter)
 }

@@ -91,3 +91,75 @@ func (s *UserGRPCServer) GetUserProfile(ctx context.Context, req *proto.UserID) 
 	responseDTO := dto.FromUserProfileDomain(user)
 	return responseDTO.ToProtoUserProfile(), nil
 }
+
+func (s *UserGRPCServer) ListUsers(ctx context.Context, req *proto.ListUsersRequest) (*proto.ListUsersResponse, error) {
+	page := req.GetPage()
+	limit := req.GetLimit()
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 200 {
+		limit = 50
+	}
+
+	users, total, err := s.userUsecase.List(ctx, page, limit)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	out := &proto.ListUsersResponse{
+		Users: make([]*proto.UserProfile, 0, len(users)),
+		Total: total,
+	}
+	for _, u := range users {
+		out.Users = append(out.Users, &proto.UserProfile{
+			UserId: u.ID,
+			Email:  u.Email,
+			Name:   u.Name,
+		})
+	}
+	return out, nil
+}
+
+func (s *UserGRPCServer) UpdateUser(ctx context.Context, req *proto.UpdateUserRequest) (*proto.UserProfile, error) {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
+	}
+	filter := domain.UserFilter{ID: &req.UserId}
+	email := req.GetEmail()
+	name := req.GetName()
+	password := req.GetPassword()
+
+	updatedUser, err := s.userUsecase.Update(ctx, filter, &name, &email, &password)
+	if err != nil {
+		switch err {
+		case domain.ErrInvalidUserUpdate:
+			return nil, status.Error(codes.InvalidArgument, "at least one field is required")
+		case domain.ErrUserNotFound:
+			return nil, status.Error(codes.NotFound, "user not found")
+		default:
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	}
+	return &proto.UserProfile{
+		UserId: updatedUser.ID,
+		Email:  updatedUser.Email,
+		Name:   updatedUser.Name,
+	}, nil
+}
+
+func (s *UserGRPCServer) DeleteUser(ctx context.Context, req *proto.UserID) (*proto.DeleteUserResponse, error) {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
+	}
+
+	filter := domain.UserFilter{ID: &req.UserId}
+	if err := s.userUsecase.Delete(ctx, filter); err != nil {
+		if err == domain.ErrUserNotFound {
+			return nil, status.Error(codes.NotFound, "user not found")
+		}
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &proto.DeleteUserResponse{Message: "user deleted"}, nil
+}

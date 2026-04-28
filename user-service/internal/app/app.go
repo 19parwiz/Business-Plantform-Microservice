@@ -41,7 +41,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 
 	hasher := hashing.NewBcryptHasher()
 
-	// Initialize the mailer here
+	// Mailer is used by registration flow for confirmation email links.
 	mailer := mail.NewMailer(
 		cfg.SMTP.Host,
 		cfg.SMTP.Port,
@@ -66,6 +66,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 func (app *App) Start() error {
 	errCh := make(chan error)
 
+	// User service exposes lightweight HTTP health endpoints plus gRPC API.
 	app.httpHealth.Run(errCh)
 	app.grpcServer.Run(errCh)
 

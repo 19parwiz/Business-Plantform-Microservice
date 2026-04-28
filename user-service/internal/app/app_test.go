@@ -61,6 +61,14 @@ func (m *testUserRepo) GetWithFilter(ctx context.Context, filter domain.UserFilt
 	return domain.User{}, errors.New("user not found")
 }
 
+func (m *testUserRepo) List(ctx context.Context, page, limit int64) ([]domain.User, int64, error) {
+	out := make([]domain.User, 0, len(m.users))
+	for _, u := range m.users {
+		out = append(out, u)
+	}
+	return out, int64(len(out)), nil
+}
+
 func (m *testUserRepo) Delete(ctx context.Context, filter domain.UserFilter) error {
 	return errors.New("not implemented")
 }
