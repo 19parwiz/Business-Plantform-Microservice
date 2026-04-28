@@ -1,13 +1,12 @@
 package config
 
 import (
+	"os"
+	"time"
+
 	"github.com/19parwiz/order-service/pkg/postgres"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
-	_ "github.com/joho/godotenv/autoload"
-	"log"
-
-	"time"
 )
 
 type (
@@ -50,9 +49,12 @@ type (
 )
 
 func New() (*Config, error) {
-	//Loading local .env file for private configuration
-	if err := godotenv.Load("local.env"); err != nil {
-		log.Printf("Error loading local.env file")
+	// Load local.env.template, then local.env, then .env; later files override earlier ones (missing files skipped).
+	for _, name := range []string{"local.env.template", "local.env", ".env"} {
+		if _, err := os.Stat(name); err != nil {
+			continue
+		}
+		_ = godotenv.Overload(name)
 	}
 
 	var cfg Config
