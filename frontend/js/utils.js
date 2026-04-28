@@ -12,7 +12,12 @@ export function escapeHtml(s) {
 
 export function money(n) {
   const v = Number(n);
-  return Number.isFinite(v) ? `$${v.toFixed(2)}` : "—";
+  if (!Number.isFinite(v)) return "—";
+  return new Intl.NumberFormat("kk-KZ", {
+    style: "currency",
+    currency: "KZT",
+    maximumFractionDigits: 0,
+  }).format(v);
 }
 
 export function pid(p) {

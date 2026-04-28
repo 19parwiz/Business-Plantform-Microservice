@@ -22,12 +22,12 @@
         </div>
 
         <div class="steps" aria-label="Checkout steps">
-            <span class="step-pill is-done">1 · Review</span>
-            <span class="step-pill" id="step-pill-pay">2 · Payment</span>
-            <span class="step-pill" id="step-pill-done">3 · Place order</span>
+            <a class="step-pill step-pill--link is-done" href="#checkout-lines">1 · Review</a>
+            <a class="step-pill step-pill--link" id="step-pill-pay" href="#payment-section">2 · Payment</a>
+            <button type="button" class="step-pill step-pill--link" id="step-pill-done">3 · Place order</button>
         </div>
 
-        <section class="dash-card" style="margin-bottom:1rem">
+        <section class="dash-card" id="payment-section" style="margin-bottom:1rem">
             <h2>Order review</h2>
             <div id="checkout-lines"></div>
             <p id="checkout-sub" style="margin-top:0.75rem;font-weight:600"></p>
@@ -37,7 +37,11 @@
             <h2>Payment (simulated)</h2>
             <div class="stack">
                 <label class="field"><span class="field__label">Name on card</span><input id="pay-name" type="text" autocomplete="cc-name" placeholder="Alex Customer" /></label>
-                <label class="field"><span class="field__label">Card number</span><input id="pay-pan" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242" disabled /></label>
+                <label class="field"><span class="field__label">Card number</span><input id="pay-pan" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="23" /></label>
+                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem">
+                    <label class="field"><span class="field__label">Valid until</span><input id="pay-exp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" /></label>
+                    <label class="field"><span class="field__label">CVV</span><input id="pay-cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" /></label>
+                </div>
                 <label class="field" style="flex-direction:row;align-items:center;gap:0.5rem">
                     <input type="checkbox" id="pay-ok" />
                     <span>I understand this is a demo — proceed to place the order</span>
