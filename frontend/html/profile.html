@@ -17,6 +17,17 @@
         <h1 class="page-title">Your profile</h1>
         <p id="profile-status" class="status"></p>
         <div id="profile-card" class="profile-card" style="max-width:28rem;margin-top:1rem"></div>
+        <section class="dash-card" style="max-width:34rem;margin-top:1rem">
+            <h2>Settings</h2>
+            <p class="lede">Update your name/email, or set a new password.</p>
+            <form id="profile-settings-form" class="stack">
+                <label class="field"><span class="field__label">Name</span><input id="ps-name" /></label>
+                <label class="field"><span class="field__label">Email</span><input id="ps-email" type="email" /></label>
+                <label class="field"><span class="field__label">New password</span><input id="ps-password" type="password" autocomplete="new-password" /></label>
+                <button type="submit" class="btn btn--primary">Save settings</button>
+            </form>
+            <p id="profile-settings-status" class="status"></p>
+        </section>
     </main>
     <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
     <script type="module" src="../js/profile-page.js"></script>

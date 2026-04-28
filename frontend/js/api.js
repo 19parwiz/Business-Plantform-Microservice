@@ -74,6 +74,31 @@ export async function getProfile() {
   return apiFetch("/api/v1/users/profile", { method: "GET" });
 }
 
+export async function listUsers(page = 1, limit = 50) {
+  const q = new URLSearchParams({ page: String(page), limit: String(limit) });
+  return apiFetch(`/api/v1/users?${q}`, { method: "GET" });
+}
+
+export async function updateProfile(body) {
+  return apiFetch("/api/v1/users/profile", {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateUser(id, body) {
+  return apiFetch(`/api/v1/users/${encodeURIComponent(String(id))}`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteUser(id) {
+  return apiFetch(`/api/v1/users/${encodeURIComponent(String(id))}`, {
+    method: "DELETE",
+  });
+}
+
 /**
  * Create order line items. Gateway expects snake_case keys on each line.
  */

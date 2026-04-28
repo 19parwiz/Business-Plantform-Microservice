@@ -15,7 +15,7 @@
     <main class="page-wrap">
         <p class="welcome-tag" aria-live="polite"></p>
         <h1 class="page-title">Admin</h1>
-        <p class="page-lede">Gateway-backed tools: <strong>catalog</strong> (inventory), <strong>orders</strong> (order service), <strong>users</strong> (profile read only — no list/update API yet).</p>
+        <p class="page-lede">Gateway-backed tools: <strong>catalog</strong> (inventory), <strong>orders</strong> (order service), <strong>users</strong> (full management).</p>
         <div class="callout callout--amber"><strong>Demo.</strong> Lock down roles and audit on the server for production.</div>
 
         <div class="admin-tabbar" role="tablist" aria-label="Admin sections">
@@ -38,6 +38,10 @@
             </section>
             <section class="dash-card">
                 <h2>Catalog</h2>
+                <div class="btn-row" style="margin-bottom:.55rem">
+                    <input id="catalog-search" placeholder="Search by id, name, category" style="min-width:18rem" />
+                    <button type="button" class="btn btn--quiet" id="catalog-search-btn">Search</button>
+                </div>
                 <p id="admin-list-status" class="status"></p>
                 <div style="overflow-x:auto;margin-top:0.75rem">
                     <table class="admin-table" id="admin-table">
@@ -74,11 +78,33 @@
 
         <section class="admin-panel" data-panel="users" id="admin-panel-users" hidden>
             <section class="dash-card">
-                <h2>User profile</h2>
-                <p class="lede" style="margin-top:0">Read-only: <code>GET /api/v1/users/profile</code>. Register stays on the auth page; there is no admin list or delete user route on the gateway yet.</p>
-                <button type="button" class="btn btn--primary" id="btn-profile-load">Load profile</button>
+                <h2>Users</h2>
+                <p class="lede" style="margin-top:0">Admin can load current profile, list users, and delete users (except self) via gateway routes.</p>
+                <div class="btn-row">
+                    <button type="button" class="btn btn--primary" id="btn-profile-load">Load profile</button>
+                    <button type="button" class="btn btn--quiet" id="btn-users-load">Load users</button>
+                </div>
+                <form id="admin-user-create-form" class="stack" style="max-width:26rem;margin-top:.8rem">
+                    <h3 style="margin:0">Create user</h3>
+                    <label class="field"><span class="field__label">Name</span><input id="u-create-name" required /></label>
+                    <label class="field"><span class="field__label">Email</span><input id="u-create-email" type="email" required /></label>
+                    <label class="field"><span class="field__label">Password</span><input id="u-create-password" type="password" required /></label>
+                    <button type="submit" class="btn btn--primary">Create user</button>
+                </form>
+                <p id="admin-user-create-status" class="status"></p>
+                <div class="btn-row" style="margin-top:.4rem">
+                    <input id="users-search" placeholder="Search by id, email, name" style="min-width:18rem" />
+                    <button type="button" class="btn btn--quiet" id="users-search-btn">Search</button>
+                </div>
                 <pre id="admin-profile-out" class="admin-profile-out" style="margin-top:1rem;display:none"></pre>
                 <p id="admin-profile-status" class="status"></p>
+                <div style="overflow-x:auto;margin-top:0.85rem">
+                    <table class="admin-table">
+                        <thead><tr><th>Id</th><th>Email</th><th>Name</th><th></th></tr></thead>
+                        <tbody id="admin-users-tbody"></tbody>
+                    </table>
+                </div>
+                <p id="admin-users-status" class="status"></p>
             </section>
         </section>
     </main>
@@ -114,6 +140,20 @@
             <div class="btn-row">
                 <button type="submit" class="btn btn--primary">Save</button>
                 <button type="button" class="btn btn--quiet" id="o-cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="user-dlg" class="sheet">
+        <div class="sheet__head">Update user</div>
+        <form id="user-form" class="sheet__body stack">
+            <input type="hidden" id="u-id" />
+            <label class="field"><span class="field__label">Name</span><input id="u-name" /></label>
+            <label class="field"><span class="field__label">Email</span><input id="u-email" type="email" /></label>
+            <label class="field"><span class="field__label">New password</span><input id="u-password" type="password" /></label>
+            <div class="btn-row">
+                <button type="submit" class="btn btn--primary">Save</button>
+                <button type="button" class="btn btn--quiet" id="u-cancel">Cancel</button>
             </div>
         </form>
     </dialog>
