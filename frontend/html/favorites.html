@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8080" />
+    <meta name="description" content="Your saved microgreens and flowers at AgroTech Fresh." />
+    <title>Favourites · AgroTech Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap">
+        <p class="welcome-tag" aria-live="polite"></p>
+        <h1 class="page-title">Your favourites</h1>
+        <p class="page-lede">Saved on this device only for now — when you add a backend, sync these hearts to your user account.</p>
+        <div class="shop-toolbar">
+            <label class="field shop-toolbar__search">
+                <span class="field__label">Search saved items</span>
+                <input type="search" id="fav-search" placeholder="Filter by name or category…" autocomplete="off" />
+            </label>
+        </div>
+        <p id="fav-status" class="status" style="margin-bottom:1rem"></p>
+        <div id="fav-grid" class="shop-grid"></div>
+    </main>
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script type="module" src="../js/favorites-page.js"></script>
+</body>
+</html>

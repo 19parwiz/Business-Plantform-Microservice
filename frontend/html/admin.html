@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8080" />
+    <title>Admin · AgroTech Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap">
+        <p class="welcome-tag" aria-live="polite"></p>
+        <h1 class="page-title">Admin</h1>
+        <p class="page-lede">Gateway-backed tools: <strong>catalog</strong> (inventory), <strong>orders</strong> (order service), <strong>users</strong> (profile read only — no list/update API yet).</p>
+        <div class="callout callout--amber"><strong>Demo.</strong> Lock down roles and audit on the server for production.</div>
+
+        <div class="admin-tabbar" role="tablist" aria-label="Admin sections">
+            <button type="button" class="admin-tab is-active" role="tab" aria-selected="true" data-tab="catalog">Catalog</button>
+            <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="orders">Orders</button>
+            <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="users">Users</button>
+        </div>
+
+        <section class="admin-panel" data-panel="catalog" id="admin-panel-catalog">
+            <section class="dash-card" style="margin-bottom:1.25rem">
+                <h2>Add product</h2>
+                <form id="form-create" class="stack" style="max-width:26rem">
+                    <label class="field"><span class="field__label">Name</span><input id="c-name" required /></label>
+                    <label class="field"><span class="field__label">Category</span><input id="c-cat" required /></label>
+                    <label class="field"><span class="field__label">Price</span><input id="c-price" type="number" min="0" step="0.01" required /></label>
+                    <label class="field"><span class="field__label">Stock</span><input id="c-stock" type="number" min="0" step="1" required /></label>
+                    <button type="submit" class="btn btn--primary">Save product</button>
+                </form>
+                <p id="admin-create-status" class="status"></p>
+            </section>
+            <section class="dash-card">
+                <h2>Catalog</h2>
+                <p id="admin-list-status" class="status"></p>
+                <div style="overflow-x:auto;margin-top:0.75rem">
+                    <table class="admin-table" id="admin-table">
+                        <thead><tr><th>Id</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+                        <tbody id="admin-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="admin-panel" data-panel="orders" id="admin-panel-orders" hidden>
+            <section class="dash-card" style="margin-bottom:1.25rem">
+                <h2>Create order</h2>
+                <p class="lede" style="margin-top:0">POST <code>/api/v1/orders</code> for the signed-in user. Add line items below.</p>
+                <form id="form-admin-order" class="stack" style="max-width:28rem">
+                    <label class="field"><span class="field__label">Product ID</span><input id="ao-pid" type="number" min="1" step="1" required /></label>
+                    <label class="field"><span class="field__label">Quantity</span><input id="ao-qty" type="number" min="1" step="1" value="1" required /></label>
+                    <button type="submit" class="btn btn--primary">Create order</button>
+                </form>
+                <p id="admin-order-status" class="status"></p>
+            </section>
+            <section class="dash-card">
+                <h2>Your orders</h2>
+                <p class="lede" style="margin-top:0">List is scoped to the current session. Use status transitions allowed by the order service (e.g. pending → paid).</p>
+                <p id="admin-orders-status" class="status"></p>
+                <div style="overflow-x:auto;margin-top:0.75rem">
+                    <table class="admin-table">
+                        <thead><tr><th>Id</th><th>Status</th><th>Total</th><th>Created</th><th></th></tr></thead>
+                        <tbody id="admin-orders-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="admin-panel" data-panel="users" id="admin-panel-users" hidden>
+            <section class="dash-card">
+                <h2>User profile</h2>
+                <p class="lede" style="margin-top:0">Read-only: <code>GET /api/v1/users/profile</code>. Register stays on the auth page; there is no admin list or delete user route on the gateway yet.</p>
+                <button type="button" class="btn btn--primary" id="btn-profile-load">Load profile</button>
+                <pre id="admin-profile-out" class="admin-profile-out" style="margin-top:1rem;display:none"></pre>
+                <p id="admin-profile-status" class="status"></p>
+            </section>
+        </section>
+    </main>
+
+    <dialog id="edit-dlg" class="sheet">
+        <div class="sheet__head">Edit product</div>
+        <form id="edit-form" class="sheet__body stack">
+            <input type="hidden" id="e-id" />
+            <label class="field"><span class="field__label">Name</span><input id="e-name" required /></label>
+            <label class="field"><span class="field__label">Category</span><input id="e-cat" required /></label>
+            <label class="field"><span class="field__label">Price</span><input id="e-price" type="number" min="0" step="0.01" required /></label>
+            <label class="field"><span class="field__label">Stock</span><input id="e-stock" type="number" min="0" step="1" required /></label>
+            <div class="btn-row">
+                <button type="submit" class="btn btn--primary">Update</button>
+                <button type="button" class="btn btn--quiet" id="e-cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="order-dlg" class="sheet">
+        <div class="sheet__head">Update order status</div>
+        <form id="order-form" class="sheet__body stack">
+            <input type="hidden" id="o-id" />
+            <label class="field"><span class="field__label">Status</span>
+                <select id="o-status" required>
+                    <option value="pending">pending</option>
+                    <option value="paid">paid</option>
+                    <option value="shipped">shipped</option>
+                    <option value="delivered">delivered</option>
+                    <option value="cancelled">cancelled</option>
+                </select>
+            </label>
+            <div class="btn-row">
+                <button type="submit" class="btn btn--primary">Save</button>
+                <button type="button" class="btn btn--quiet" id="o-cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script type="module" src="../js/admin-page.js"></script>
+</body>
+</html>

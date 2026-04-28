@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8080" />
+    <title>Admin Dashboard · AgroTech Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap">
+        <p class="welcome-tag" aria-live="polite"></p>
+        <h1 class="page-title">Admin dashboard</h1>
+        <p class="page-lede">This area is for staff/admin tools: inventory maintenance and business insights. Customer shopping, checkout, and orders remain in the main storefront pages.</p>
+        <div id="dash-welcome" class="callout" hidden></div>
+        <div class="layout-split">
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Shop</h2>
+                    <p>Photo cards for microgreens and flowers — search, hearts, add to cart.</p>
+                    <a class="btn btn--primary" href="index.html#catalog">Go to catalog</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Favourites</h2>
+                    <p>Saved ♥ items with the same imagery as the shop wall.</p>
+                    <a class="btn btn--outline" href="favorites.html">Open favourites</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Cart &amp; checkout</h2>
+                    <p>Line previews with thumbnails; demo payment until you wire a processor.</p>
+                    <a class="btn btn--outline" href="cart.html">View cart</a>
+                    <a class="btn btn--primary" href="checkout.html">Checkout</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1563514227147-6a0471065a2c?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Orders</h2>
+                    <p>Receipts for trays and bouquets from your order service.</p>
+                    <a class="btn btn--outline" href="orders.html">Order history</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Sales insights</h2>
+                    <p>Revenue mix and best sellers from the orders you pull through the API.</p>
+                    <a class="btn btn--primary" href="analytics.html">Open insights</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1606800052052-a08c5214fd89?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Account</h2>
+                    <p>Profile fields from your user microservice.</p>
+                    <a class="btn btn--outline" href="profile.html">My profile</a>
+                </div>
+            </article>
+            <article class="dash-card dash-card--panel">
+                <div class="dash-card__visual">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;w=800&amp;h=500&amp;q=82" alt="" loading="lazy" width="800" height="500" />
+                </div>
+                <div class="dash-card__body">
+                    <h2>Inventory (staff)</h2>
+                    <p>Catalog CRUD against the same gateway your Go services expose.</p>
+                    <a class="btn btn--outline" href="admin.html">Manage products</a>
+                </div>
+            </article>
+        </div>
+    </main>
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script type="module" src="../js/dashboard-page.js"></script>
+</body>
+</html>

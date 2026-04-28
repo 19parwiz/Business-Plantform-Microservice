@@ -36,7 +36,7 @@ export function logout() {
 }
 
 /**
- * If the visitor is not signed in, redirect to login and stop.
+ * If the visitor is not signed in, redirect to auth and stop.
  * @returns {boolean} true when logged in
  */
 export function requireAuthOrRedirect() {
@@ -45,6 +45,6 @@ export function requireAuthOrRedirect() {
   const here = encodeURIComponent(
     `${window.location.pathname}${window.location.search}`
   );
-  window.location.assign(`login.html?next=${here}`);
+  window.location.assign(`auth.html?next=${here}`);
   return false;
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="AgroTech Fresh — microgreens, flowers, and smart agritech commerce." />
+    <meta name="api-base" content="http://localhost:8080" />
+    <meta name="store-name" content="AgroTech Fresh" />
+    <meta name="store-tagline" content="Microgreens & Flowers Store" />
+    <title>AgroTech Fresh — Microgreens &amp; Flowers</title>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap page-wrap--home">
+        <section class="page-hero" aria-labelledby="home-hero-title">
+            <p class="welcome-tag" aria-live="polite"></p>
+            <h1 id="home-hero-title">Fresh microgreens and flowers, delivered with confidence</h1>
+            <p>Explore premium, locally grown products with a smooth shopping experience from discovery to checkout. Create an account to save favourites, manage orders, and enjoy faster purchasing.</p>
+            <div class="cta-row">
+                <a class="btn btn--primary btn--hero-solid" href="#catalog">Browse catalog</a>
+                <a class="btn btn--quiet btn--hero-muted" href="?cat=microgreens#catalog">Microgreens</a>
+                <a class="btn btn--quiet btn--hero-muted" href="?cat=flowers#catalog">Flowers</a>
+            </div>
+            <p class="page-hero__credit">Powered by AgroTech platform services for products, users, and orders.</p>
+        </section>
+
+        <section class="home-scrollband" aria-label="Photos">
+            <div class="home-scrollband__track">
+                <figure class="home-scrollband__fig"><img src="../assets/images/Pages/New (1).jpg" alt="Fresh plants from local farm" width="640" height="480" loading="lazy" /></figure>
+                <figure class="home-scrollband__fig"><img src="../assets/images/Pages/New (2).jpg" alt="Seasonal flowers and herbs" width="640" height="480" loading="lazy" /></figure>
+                <figure class="home-scrollband__fig"><img src="../assets/images/Pages/New (3).jpg" alt="Natural produce assortment" width="640" height="480" loading="lazy" /></figure>
+            </div>
+        </section>
+
+        <section id="catalog" class="home-catalog section-anchor" tabindex="-1" aria-labelledby="catalog-title">
+            <h2 id="catalog-title" class="page-title">Shop the wall</h2>
+            <p class="page-lede page-lede--wide">Search or use the chips. <strong>Sign in</strong> for favourites and cart.</p>
+            <div class="shop-toolbar">
+                <div class="shop-toolbar__row">
+                    <label class="field shop-toolbar__search">
+                        <span class="field__label">Search</span>
+                        <input type="search" id="shop-search" placeholder="Name, category, or #id" autocomplete="off" />
+                    </label>
+                    <div class="shop-toolbar__links" id="shop-toolbar-links" aria-label="Cart"></div>
+                </div>
+                <div class="shop-categories" role="group" aria-label="Categories">
+                    <button type="button" class="btn btn--quiet btn--sm" data-cat="all">All plants</button>
+                    <button type="button" class="btn btn--quiet btn--sm" data-cat="flowers">Flowers</button>
+                    <button type="button" class="btn btn--quiet btn--sm" data-cat="microgreens">Microgreens</button>
+                </div>
+            </div>
+            <p id="shop-status" class="status" style="margin-bottom:1rem"></p>
+            <div id="shop-grid" class="shop-grid"></div>
+        </section>
+    </main>
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script type="module" src="../js/home-page.js"></script>
+</body>
+</html>

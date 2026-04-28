@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8080" />
+    <title>Sales insights · AgroTech Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap">
+        <p class="welcome-tag" aria-live="polite"></p>
+        <h1 class="page-title">Sales insights</h1>
+        <p class="page-lede">Roll-ups from your order history: revenue, mix by category, and best-selling lines. Today this uses only the orders returned for the logged-in account — add an owner/admin API later for store-wide totals.</p>
+        <div class="callout callout--amber">
+            <strong>Scope note.</strong> Charts reflect <em>your</em> visible orders from the gateway. A future backend can expose store-wide analytics and date filters.
+        </div>
+        <p id="analytics-status" class="status" role="status"></p>
+
+        <section class="stat-cards" id="stat-cards" aria-label="Summary"></section>
+
+        <div class="analytics-charts">
+            <article class="dash-card chart-card">
+                <h2>Revenue by category</h2>
+                <p class="chart-card__hint">Uses inventory categories when line items match catalog IDs; otherwise a simple name-based guess.</p>
+                <div class="chart-wrap">
+                    <canvas id="chart-category" aria-label="Pie chart revenue by category"></canvas>
+                </div>
+            </article>
+            <article class="dash-card chart-card">
+                <h2>Units by product (top lines)</h2>
+                <p class="chart-card__hint">Stacked quantity across all loaded orders.</p>
+                <div class="chart-wrap chart-wrap--tall">
+                    <canvas id="chart-products" aria-label="Bar chart units by product"></canvas>
+                </div>
+            </article>
+        </div>
+
+        <section class="dash-card" style="margin-top:1.25rem">
+            <h2>Top products (detail)</h2>
+            <div class="table-wrap">
+                <table class="admin-table" id="analytics-table">
+                    <thead>
+                        <tr><th>Product</th><th>Category</th><th>Units sold</th><th>Est. line revenue</th></tr>
+                    </thead>
+                    <tbody id="analytics-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="module" src="../js/analytics-page.js"></script>
+</body>
+</html>

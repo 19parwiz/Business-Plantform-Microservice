@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="api-base" content="http://localhost:8080" />
+    <title>Auth · AgroTech Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="layout-column">
+    <header class="site-bar" id="site-header"></header>
+    <main class="page-wrap">
+        <p class="welcome-tag" aria-live="polite"></p>
+        <h1 class="page-title">Log in or create account</h1>
+        <p class="page-lede">Enter your details below to continue: you are sent to the home page with a saved session. The gateway is called when it is up; otherwise the UI still works for demo checkout, payment, and orders.</p>
+        <div class="layout-split layout-split--auth">
+            <section class="form-card">
+                <h2>Log in</h2>
+                <p class="lede" id="login-lede">Sign in to continue checkout and orders. For preview mode, leave empty and press Continue.</p>
+                <form id="form-login" class="stack">
+                    <label class="field"><span class="field__label">Email</span><input id="login-email" type="email" autocomplete="username" /></label>
+                    <label class="field"><span class="field__label">Password</span><input id="login-password" type="password" autocomplete="current-password" /></label>
+                    <button type="submit" class="btn btn--primary">Continue</button>
+                </form>
+                <p id="status-login" class="status" role="status"></p>
+            </section>
+            <section class="form-card">
+                <h2>Register</h2>
+                <p class="lede">Fill all three fields, then <strong>Create account</strong> — you go straight to the site. If the server is offline, your session is stored in the browser only.</p>
+                <form id="form-register" class="stack">
+                    <label class="field"><span class="field__label">Email</span><input id="reg-email" type="email" autocomplete="email" /></label>
+                    <label class="field"><span class="field__label">Password</span><input id="reg-password" type="password" autocomplete="new-password" /></label>
+                    <label class="field"><span class="field__label">Name</span><input id="reg-name" type="text" autocomplete="name" /></label>
+                    <button type="submit" class="btn btn--primary">Create account</button>
+                </form>
+                <p id="status-register" class="status" role="status"></p>
+            </section>
+        </div>
+    </main>
+    <footer class="page-footer">AgroTech Fresh — Microgreens &amp; flowers</footer>
+    <script type="module" src="../js/auth-page.js"></script>
+</body>
+</html>

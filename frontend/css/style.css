@@ -715,25 +715,6 @@ body {
     mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.25rem), transparent 100%);
 }
 
-.site-bar__actions {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.15rem 0.35rem;
-    min-width: 0;
-    flex: 0 1 auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-}
-
-.site-bar__actions .nav-link,
-.site-bar__actions .nav-link--btn {
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
 .site-bar__nav--categories .nav-link {
     white-space: nowrap;
     flex-shrink: 0;
@@ -743,12 +724,6 @@ body {
     .site-bar__row--top {
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .site-bar__actions {
-        justify-content: flex-start;
-        width: 100%;
-        padding-bottom: 0.1rem;
     }
 }
 
@@ -786,6 +761,17 @@ body {
     cursor: pointer;
     font-family: inherit;
     background: none;
+}
+
+.nav-link--cta {
+    background: var(--accent);
+    color: #fff;
+    border-color: transparent;
+}
+
+.nav-link--cta:hover {
+    background: var(--accent-hover);
+    color: #fff;
 }
 
 .nav-badge {
@@ -1165,6 +1151,23 @@ body {
     border-color: rgba(194, 24, 91, 0.25);
 }
 
+.btn-fav.btn-fav--guest:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+}
+
+.btn-fav.btn-fav--guest:disabled:hover {
+    color: var(--text-muted);
+    transform: none;
+}
+
+.shop-toolbar__guest-msg {
+    font-size: 0.86rem;
+    line-height: 1.35;
+    text-align: right;
+    max-width: 22rem;
+}
+
 .welcome-tag {
     margin: 0 0 0.5rem;
     font-size: 0.95rem;
@@ -1176,10 +1179,39 @@ body {
 
 .shop-toolbar {
     margin-bottom: 0.5rem;
+    display: grid;
+    gap: 0.6rem;
+}
+
+.shop-toolbar__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+}
+
+.shop-toolbar__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
 }
 
 .shop-toolbar__search {
     max-width: 28rem;
+}
+
+.shop-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.shop-categories .btn.is-active {
+    background: rgba(45, 106, 79, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(45, 106, 79, 0.2);
 }
 
 .shop-card__price {
@@ -1235,6 +1267,46 @@ body {
 .step-pill.is-done {
     background: rgba(45, 106, 79, 0.12);
     color: var(--accent);
+}
+
+.admin-tabbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.admin-tab {
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.admin-tab:hover {
+    color: var(--text);
+    border-color: rgba(45, 106, 79, 0.35);
+}
+
+.admin-tab.is-active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(45, 106, 79, 0.08);
+}
+
+.admin-profile-out {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: rgba(28, 38, 31, 0.04);
+    font-size: 0.8rem;
+    overflow-x: auto;
+    max-height: 22rem;
 }
 
 .admin-table {
@@ -1313,6 +1385,59 @@ dialog.sheet::backdrop {
     font-size: 0.92rem;
     max-width: 52ch;
     line-height: 1.5;
+}
+
+.page-lede--wide {
+    max-width: 62ch;
+}
+
+.page-wrap--home {
+    max-width: min(1240px, 100%);
+}
+
+.section-anchor {
+    scroll-margin-top: 5.5rem;
+}
+
+.home-scrollband {
+    margin: 1.5rem 0 2rem;
+}
+
+.home-scrollband__track {
+    display: flex;
+    gap: 0.65rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.15rem 0 0.65rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.home-scrollband__fig {
+    flex: 0 0 min(280px, 82vw);
+    margin: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    scroll-snap-align: start;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border);
+}
+
+.home-scrollband__fig img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.home-catalog {
+    margin-bottom: 2rem;
+}
+
+.home-catalog .page-title {
+    margin-top: 0.25rem;
 }
 
 body.layout-column {

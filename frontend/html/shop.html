@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Redirect to catalog</title>
+    <script>
+        (function () {
+            var target = "index.html" + window.location.search +
+                (window.location.hash || "#catalog");
+            window.location.replace(target);
+        })();
+    </script>
+    <link rel="canonical" href="index.html#catalog" />
+</head>
+<body>
+    <p>The catalog lives on the <a href="index.html#catalog">home page</a>.</p>
+</body>
+</html>

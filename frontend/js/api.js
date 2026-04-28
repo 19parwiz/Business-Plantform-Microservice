@@ -38,12 +38,6 @@ export async function apiFetch(path, { method = "GET", body } = {}) {
   return data;
 }
 
-/** Lightweight check that the gateway is up (public catalog route). */
-export async function pingGateway() {
-  const q = new URLSearchParams({ page: "1", limit: "1" });
-  await apiFetch(`/api/v1/products?${q}`, { method: "GET" });
-}
-
 export async function registerUser(payload) {
   return apiFetch("/api/v1/users/register", {
     method: "POST",
@@ -54,12 +48,6 @@ export async function registerUser(payload) {
 export async function listProducts(page = 1, limit = 50) {
   const q = new URLSearchParams({ page: String(page), limit: String(limit) });
   return apiFetch(`/api/v1/products?${q}`);
-}
-
-export async function getProduct(id) {
-  return apiFetch(`/api/v1/products/${encodeURIComponent(String(id))}`, {
-    method: "GET",
-  });
 }
 
 export async function createProduct(body) {
