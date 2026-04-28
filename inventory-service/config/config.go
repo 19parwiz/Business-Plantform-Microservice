@@ -1,10 +1,12 @@
 package config
 
 import (
+	"os"
+	"time"
+
 	"github.com/19parwiz/inventory-service/pkg/postgres"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
-	"time"
 )
 
 type (
@@ -36,9 +38,13 @@ type (
 )
 
 func New() (*Config, error) {
-	// PostgreSQL (and Kafka, ports): local.env then .env (.env wins so secrets you edit here override any template).
-	_ = godotenv.Load("local.env")
-	_ = godotenv.Overload(".env")
+	// Load local.env.template, then local.env, then .env; later files override earlier ones (missing files skipped).
+	for _, name := range []string{"local.env.template", "local.env", ".env"} {
+		if _, err := os.Stat(name); err != nil {
+			continue
+		}
+		_ = godotenv.Overload(name)
+	}
 
 	var cfg Config
 	err := env.Parse(&cfg)
