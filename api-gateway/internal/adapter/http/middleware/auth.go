@@ -26,8 +26,16 @@ func AuthMiddleware(userClient proto.AuthClient) gin.HandlerFunc {
 		authResp, err := userClient.AuthenticateUser(c.Request.Context(), authReq)
 		if err != nil {
 			st, ok := status.FromError(err)
-			if ok && st.Code() == codes.Unauthenticated {
-				c.JSON(401, gin.H{"error": "authentication failed"})
+			if ok {
+				switch st.Code() {
+				case codes.Unauthenticated, codes.NotFound:
+					// Treat unknown user and wrong password the same to avoid account enumeration.
+					c.JSON(401, gin.H{"error": "authentication failed"})
+				case codes.InvalidArgument:
+					c.JSON(400, gin.H{"error": "invalid authentication headers"})
+				default:
+					c.JSON(500, gin.H{"error": "internal server error"})
+				}
 			} else {
 				c.JSON(500, gin.H{"error": "internal server error"})
 			}

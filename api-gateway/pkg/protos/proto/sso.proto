@@ -8,6 +8,9 @@ service Auth {
   rpc RegisterUser(UserRequest) returns (UserResponse);
   rpc AuthenticateUser(AuthRequest) returns (AuthResponse);
   rpc GetUserProfile(UserID) returns (UserProfile);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserProfile);
+  rpc DeleteUser(UserID) returns (DeleteUserResponse);
 }
 
 message UserRequest {
@@ -38,4 +41,25 @@ message UserProfile {
   uint64 user_id = 1;
   string email = 2;
   string name = 3;
+}
+
+message ListUsersRequest {
+  int64 page = 1;
+  int64 limit = 2;
+}
+
+message ListUsersResponse {
+  repeated UserProfile users = 1;
+  int64 total = 2;
+}
+
+message UpdateUserRequest {
+  uint64 user_id = 1;
+  string email = 2;
+  string name = 3;
+  string password = 4;
+}
+
+message DeleteUserResponse {
+  string message = 1;
 }

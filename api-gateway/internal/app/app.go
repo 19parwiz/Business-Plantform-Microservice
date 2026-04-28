@@ -26,6 +26,7 @@ type App struct {
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	log.Printf("Initializing %s service...", ServiceName)
 
+	// Gateway boots by connecting gRPC clients to downstream services.
 	grpcClients, err := grpc.NewClients(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize gRPC clients: %w", err)
@@ -47,6 +48,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 func (app *App) Start() error {
 	errCh := make(chan error)
 
+	// Run HTTP server and wait for either runtime error or OS shutdown signal.
 	app.httpServer.Run(errCh)
 
 	log.Printf("Starting %s service!", ServiceName)
@@ -68,6 +70,7 @@ func (app *App) Start() error {
 func (app *App) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+	// Shutdown order: stop HTTP first, then close gRPC client connections.
 	if err := app.httpServer.Stop(ctx); err != nil {
 		log.Printf("Failed to stop http server: %v", err)
 	}

@@ -73,6 +73,11 @@ func (s *Server) setupRoutes() {
 		protected.PUT("/products/:id", s.handler.UpdateProduct)
 		protected.DELETE("/products/:id", s.handler.DeleteProduct)
 
+		protected.PUT("/users/profile", s.handler.UpdateOwnProfile)
+		protected.GET("/users", s.handler.ListUsers)
+		protected.PUT("/users/:id", s.handler.UpdateUser)
+		protected.DELETE("/users/:id", s.handler.DeleteUser)
+
 		protected.POST("/orders", s.handler.CreateOrder)
 		protected.GET("/orders", s.handler.GetOrders)
 		protected.GET("/orders/:id", s.handler.GetOrder)
