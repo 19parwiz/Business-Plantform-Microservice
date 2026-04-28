@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// UserRepo is the Postgres-backed implementation of user persistence.
 type UserRepo struct {
 	pool *pgxpool.Pool
 }
@@ -43,6 +44,7 @@ func (u *UserRepo) Create(ctx context.Context, user domain.User) error {
 	)
 	if err != nil {
 		var pgErr *pgconn.PgError
+		// 23505 = unique_violation — almost always "this email is already taken".
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return domain.ErrUserExists
 		}
@@ -53,6 +55,7 @@ func (u *UserRepo) Create(ctx context.Context, user domain.User) error {
 
 func (u *UserRepo) GetWithFilter(ctx context.Context, filter domain.UserFilter) (domain.User, error) {
 	where, args, _ := userFilterToWhere(filter, 1)
+	// No open-ended "SELECT * FROM users" — you need at least one filter field.
 	if where == "" {
 		return domain.User{}, domain.ErrUserNotFound
 	}
@@ -112,6 +115,7 @@ func (u *UserRepo) Update(ctx context.Context, filter domain.UserFilter, update 
 		argPos++
 	}
 	if len(setClauses) == 0 {
+		// Nothing to change; treat as success (caller sent an empty patch).
 		return nil
 	}
 
@@ -149,6 +153,7 @@ func (u *UserRepo) Delete(ctx context.Context, filter domain.UserFilter) error {
 	return nil
 }
 
+// userFilterToWhere builds a safe AND… AND clause and keeps $1, $2, … in sync with args.
 func userFilterToWhere(filter domain.UserFilter, argStart int) (string, []any, int) {
 	clauses := make([]string, 0, 3)
 	args := make([]any, 0, 3)

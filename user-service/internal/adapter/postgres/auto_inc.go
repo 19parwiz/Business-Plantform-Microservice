@@ -7,6 +7,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// AutoInc hands out the next numeric id for a named "collection" (e.g. users).
+// We use a tiny Postgres table so ids stay unique even though several services share one database.
 type AutoInc struct {
 	pool *pgxpool.Pool
 }
@@ -15,6 +17,7 @@ func NewAutoInc(pool *pgxpool.Pool) *AutoInc {
 	return &AutoInc{pool: pool}
 }
 
+// Next does insert-or-bump in one round trip: first row wins 1, later calls add 1.
 func (a *AutoInc) Next(ctx context.Context, coll string) (uint64, error) {
 	query := `
 INSERT INTO user_auto_inc_ids (collection_name, counter)
