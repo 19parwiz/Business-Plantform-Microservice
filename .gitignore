@@ -1,9 +1,15 @@
-# --- Secrets & local config (never commit) ---
+# --- Secrets and local configuration ---
 .env
+**/.env
 .env.*
+**/.env.*
 *.local
+**/*.local
 local.env
 **/local.env
+.envrc
+**/.envrc
+.direnv/
 *.pem
 *.key
 *_rsa
@@ -11,10 +17,13 @@ local.env
 *.pfx
 secrets/
 .secrets/
+**/credentials.json
+**/service-account*.json
 
-# --- Markdown: ignore all except README.md ---
+# --- Markdown (README and progress tracked) ---
 *.md
 !README.md
+!progress.md
 
 # --- Plain text dumps / notes ---
 *.txt

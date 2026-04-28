@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"errors"
+	"strings"
 	"github.com/19parwiz/order-service/internal/adapter/grpc/dto"
 	"github.com/19parwiz/order-service/internal/domain"
 	"github.com/19parwiz/order-service/internal/usecase"
@@ -30,6 +31,16 @@ func (s *OrderGRPCServer) CreateOrder(ctx context.Context, req *proto.CreateOrde
 	if err != nil {
 		if errors.Is(err, domain.ErrInvalidOrder) {
 			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		// Pass through downstream gRPC statuses (e.g. inventory NotFound) so gateway can map cleanly.
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.NotFound, codes.InvalidArgument, codes.FailedPrecondition, codes.Unavailable:
+				return nil, status.Error(st.Code(), st.Message())
+			}
+		}
+		if strings.Contains(strings.ToLower(err.Error()), "insufficient stock") {
+			return nil, status.Error(codes.FailedPrecondition, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -59,6 +59,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	httpServer := httpRepo.New(cfg.Server, pUsecase, pgDB)
 	grpcServer := grpcAPI.New(cfg.Server, pUsecase)
 
+	// Kafka is optional for inventory: without brokers, API still serves normally.
 	brokers := nonEmptyBrokers(cfg.Brokers)
 	var consumerGroup sarama.ConsumerGroup
 	var kafkaHandler *kafka.Consumer
@@ -89,10 +90,12 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 func (app *App) Start() error {
 	errCh := make(chan error)
 
+	// Inventory serves both HTTP and gRPC in the same process.
 	app.httpServer.Run(errCh)
 	app.grpcServer.Run(errCh)
 
 	if app.consumerGroup != nil && app.kafkaHandler != nil {
+		// Consume order events continuously to adjust stock levels.
 		go func() {
 			for {
 				if err := app.consumerGroup.Consume(context.Background(), []string{app.kafkaHandler.Topic}, app.kafkaHandler); err != nil {

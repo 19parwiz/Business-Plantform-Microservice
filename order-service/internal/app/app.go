@@ -45,6 +45,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize gRPC clients: %w", err)
 	}
+	// Orders call inventory over gRPC to validate product and stock.
 	inventoryClient := gclients.NewInventoryClient(grpcClients.Inventory)
 
 	producer, err := kafka.NewKafkaProducer(cfg.Brokers, "order.created")
@@ -71,6 +72,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 func (app *App) Start() error {
 	errCh := make(chan error)
 
+	// Expose order APIs through both HTTP adapter and gRPC adapter.
 	app.httpServer.Run(errCh)
 	app.grpcServer.Run(errCh)
 
