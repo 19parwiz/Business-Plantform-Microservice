@@ -20,10 +20,11 @@ secrets/
 **/credentials.json
 **/service-account*.json
 
-# --- Markdown (README and progress tracked) ---
+# --- Markdown (README, progress, and report tracked) ---
 *.md
 !README.md
 !progress.md
+!Report.md
 
 # --- Plain text dumps / notes ---
 *.txt
